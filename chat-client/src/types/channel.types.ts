@@ -8,7 +8,7 @@ export interface Channel {
   id: number;
   name: string;
   participants: number;
-  messages: Message[];
+  messages?: Message[];
 }
 
 export interface ChannelListState {

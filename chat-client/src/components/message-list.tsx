@@ -11,7 +11,7 @@ export const MessageList: FC<MessageListProps> = ({ channel, ...props }) => {
   return (
     <Flex direction="column" {...props}>
       <Box flex={1}>
-        {channel.messages.map((m) => (
+        {channel.messages?.map((m) => (
           <MessageView key={m.id} senderName={m.senderName} text={m.text} />
         ))}
       </Box>
