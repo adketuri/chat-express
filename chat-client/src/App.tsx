@@ -1,7 +1,9 @@
 import { io } from "socket.io-client";
-import { ChakraProvider } from "@chakra-ui/react";
+import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { ChatView } from "./components/chat-view";
 const SERVER = "http://localhost:8080";
+
+
 
 function App() {
   const socket = io(SERVER, {
@@ -14,11 +16,7 @@ function App() {
     console.log("Client connected!");
   });
 
-  return (
-    <ChakraProvider>
-      <ChatView />
-    </ChakraProvider>
-  );
+  return (<ChatView />);
 }
 
 export default App;

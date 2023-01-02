@@ -1,16 +1,16 @@
 import { FC } from "react";
 import { Channel } from "../types/channel.types";
-import { Text } from "@chakra-ui/react"
+import { Box, BoxProps, Text } from "@chakra-ui/react"
 import { ChannelView } from "./channel-view";
 
-interface ChannelListViewProps {
+interface ChannelListViewProps extends BoxProps {
     channels?: Channel[]
 }
 
 
-export const ChannelListView: FC<ChannelListViewProps> = ({channels}) => {
+export const ChannelListView: FC<ChannelListViewProps> = ({channels, ...props}) => {
 
     if (!channels) return <Text>No Channels</Text>
-    return <>{channels.map(channel => <ChannelView key={channel.id} channel={channel} />)}</>
+    return <Box {...props}>{channels.map(channel => <ChannelView key={channel.id} channel={channel} />)}</Box>
 
 }
