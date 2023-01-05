@@ -1,7 +1,7 @@
 
 export interface ServerToClientEvents {
   connection: () => void;
-  channel: (c: any) => void
+  channel: (c: Channel) => void
   withAck: (d: string, callback: (e: number) => void) => void;
 }
 
