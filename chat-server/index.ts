@@ -2,7 +2,14 @@ import express from "express";
 import cors from "cors";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData, Channel } from "./index.types";
+import {
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SocketData,
+  Channel,
+  Message,
+} from "./index.types";
 
 var STATIC_CHANNELS: Channel[] = [
   {
@@ -57,15 +64,22 @@ const io = new Server<
 io.on("connection", (socket) => {
   console.log("new client connected", socket.id);
   socket.emit("connection");
+  socket.on(
+    "sendMessage",
+    (message: Message) => {
+      console.log("SERVER RECEIVED", message)
+      io.emit("message", message);
+    }
+  );
   socket.on("channelJoin", (channelId) => {
     console.log("channel join", channelId);
     STATIC_CHANNELS.forEach((c) => {
-      if (c.id === channelId) { 
+      if (c.id === channelId) {
         if (!c.sockets.includes(socket.id)) {
-          c.sockets.push(socket.id); 
+          c.sockets.push(socket.id);
           c.participants++;
-          io.emit("channel", c); 
-        } 
+          io.emit("channel", c);
+        }
       } else {
         let index = c.sockets.indexOf(socket.id);
         if (index != -1) {

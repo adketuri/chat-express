@@ -2,7 +2,7 @@ import { Spinner } from "@chakra-ui/react";
 import { FC, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { SERVER } from "../App";
-import { ChannelListState } from "../types/channel.types";
+import { Channel, ChannelListState } from "../types/channel.types";
 import { ChannelListView } from "./channel-list-view";
 import { MessageList } from "./message-list";
 
@@ -10,6 +10,7 @@ export const ChatView: FC = () => {
   const [channelList, setChannelList] = useState<
     ChannelListState | undefined
   >();
+  const [currentChannelIndex, setCurrentChannelIndex] = useState<number>(0);
 
   const socket = useRef<Socket | undefined>();
   const connected = useRef(false);
@@ -27,9 +28,7 @@ export const ChatView: FC = () => {
       console.log("Client connected!");
       connected.current = true;
     });
-
     socket.current?.on("channel", (channel: any) => {
-      console.log("Channel list", JSON.stringify(channelList));
       if (!channelList?.channels) return;
       console.log("NEW CHANNEL", channel);
       setChannelList({
@@ -39,6 +38,23 @@ export const ChatView: FC = () => {
               ? { ...c, participants: channel.participants }
               : c
           ) || [],
+      });
+    });
+    socket.current?.on("message", (message: any) => {
+      console.log("Received a message", message);
+      console.log(channelList?.channels);
+      if (!channelList?.channels) return;
+      const updatedChannels = channelList.channels.map((c) =>
+        c.id === message.channelId
+          ? {
+              ...c,
+              messages: c.messages ? [...c.messages, message] : [message],
+            }
+          : c
+      );
+      console.log("Setting message", updatedChannels);
+      setChannelList({
+        channels: updatedChannels,
       });
     });
   }, [channelList, channelList?.channels]);
@@ -63,8 +79,21 @@ export const ChatView: FC = () => {
 
   const handleChannelSelect = (id: number) => {
     socket.current?.emit("channelJoin", id, (ack: any) => {
-      console.log("channel-join ack", ack);
+      console.log("channelJoin ack", ack);
     });
+    setCurrentChannelIndex(id);
+  };
+
+  const handleSendMessage = (channelId: number, text: string) => {
+    if (!socket.current) return;
+    const message = {
+      channelId,
+      text,
+      senderName: socket.current.id,
+      id: Date.now(),
+    };
+    console.log("Client is sending a message: ", message);
+    socket.current.emit("sendMessage", message);
   };
 
   if (!channelList) return <Spinner />;
@@ -75,7 +104,11 @@ export const ChatView: FC = () => {
         channels={channelList.channels}
         onChannelSelect={handleChannelSelect}
       />
-      <MessageList channel={channelList.channels[0]} flex={1} />
+      <MessageList
+        channel={channelList.channels[currentChannelIndex]}
+        onMessageSend={handleSendMessage}
+        flex={1}
+      />
     </>
   );
 };
