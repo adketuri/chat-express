@@ -1,6 +1,0 @@
-{
-  "license": "UNLICENSED",
-  "scripts": {
-    "server": "nodemon index.ts"
-  }
-}

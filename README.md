@@ -1,2 +1,9 @@
 # chat-express
-Playing with sockets
+I decided to play with websockets and build a small chat app.
+
+The initial application was built using [this fullstacklabs tutorial](https://www.fullstacklabs.co/blog/chat-application-react-express-socket-io) as a starting point with a few changes:
+* Functional components instead of class components
+* Typescript support
+* [Chakra UI](https://chakra-ui.com/) for styling
+* Newer versions of express/socket.io
+* Modern es6 modules (`import` instead of `require`)

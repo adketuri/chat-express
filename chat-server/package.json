@@ -1,7 +1,8 @@
 {
   "license": "UNLICENSED",
   "scripts": {
-    "server": "nodemon index.ts"
+    "server": "cd chat-server && yarn server",
+    "start": "cd chat-client && yarn start"
   },
   "dependencies": {
     "cors": "^2.8.5",
