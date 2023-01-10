@@ -30,7 +30,7 @@ export const ChatView: FC = () => {
     });
     socket.current?.on("channel", (channel: any) => {
       if (!channelList?.channels) return;
-      console.log("NEW CHANNEL", channel);
+      console.log("Channel update", channel);
       setChannelList({
         channels:
           channelList?.channels.map((c) =>
@@ -42,7 +42,6 @@ export const ChatView: FC = () => {
     });
     socket.current?.on("message", (message: any) => {
       console.log("Received a message", message);
-      console.log(channelList?.channels);
       if (!channelList?.channels) return;
       const updatedChannels = channelList.channels.map((c) =>
         c.id === message.channelId
@@ -67,7 +66,6 @@ export const ChatView: FC = () => {
       });
       const json = await data.json();
       if (mounted) {
-        console.log("!AK set channel list", json);
         setChannelList(json);
       }
     };
@@ -79,9 +77,9 @@ export const ChatView: FC = () => {
 
   const handleChannelSelect = (id: number) => {
     socket.current?.emit("channelJoin", id, (ack: any) => {
-      console.log("channelJoin ack", ack);
+      console.log("ChannelJoin ack", ack);
     });
-    setCurrentChannelIndex(id);
+    setCurrentChannelIndex(id - 1);
   };
 
   const handleSendMessage = (channelId: number, text: string) => {

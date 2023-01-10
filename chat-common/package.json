@@ -1,0 +1,7 @@
+{
+  "name": "chat-common",
+  "version": "1.0.0",
+  "description": "common dependencies for chat-server and chat-client",
+  "license": "MIT",
+  "private": false
+}

@@ -9,7 +9,7 @@ import {
   SocketData,
   Channel,
   Message,
-} from "./index.types";
+} from "chat-common/types/index.types"
 
 var STATIC_CHANNELS: Channel[] = [
   {
@@ -17,12 +17,14 @@ var STATIC_CHANNELS: Channel[] = [
     participants: 0,
     id: 1,
     sockets: [],
+    messages: [],
   },
   {
     name: "Funny",
     participants: 0,
     id: 2,
     sockets: [],
+    messages: [],
   },
 ];
 
@@ -30,11 +32,14 @@ const app = express();
 const port: number = 8080;
 
 const httpServer = createServer(app);
+
+// cors middleware for whitelisting
 const whitelist = ["http://localhost:3000"];
 app.use(
   cors({
     credentials: true,
     origin: (origin, callback) => {
+      console.log(app);
       if (origin && whitelist.includes(origin)) {
         return callback(null, true);
       }
@@ -62,17 +67,19 @@ const io = new Server<
 });
 
 io.on("connection", (socket) => {
-  console.log("new client connected", socket.id);
+  console.log("New client connected", socket.id);
   socket.emit("connection");
   socket.on(
     "sendMessage",
     (message: Message) => {
-      console.log("SERVER RECEIVED", message)
+      // Add message locally then emit back to client
+      console.log("Server received message", message)
+      STATIC_CHANNELS.find(c => c.id === message.channelId)?.messages.push(message)
       io.emit("message", message);
     }
   );
   socket.on("channelJoin", (channelId) => {
-    console.log("channel join", channelId);
+    console.log("Server received channel join request", channelId);
     STATIC_CHANNELS.forEach((c) => {
       if (c.id === channelId) {
         if (!c.sockets.includes(socket.id)) {

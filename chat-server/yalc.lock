@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "chat-common": {
+      "signature": "d3dec52ac739721763d7689c0baa633d",
+      "link": true
+    }
+  }
+}
